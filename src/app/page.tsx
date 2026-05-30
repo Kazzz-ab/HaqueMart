@@ -1,4 +1,4 @@
-import { ProductCard } from "@/components/ProductCard";
+import { ProductGrid } from "@/components/ProductGrid";
 import { isWpConfigured } from "@/lib/graphql/client";
 import { getProducts } from "@/lib/graphql/products";
 import { MOCK_PRODUCTS, MOCK_CATEGORIES } from "@/lib/mock-data";
@@ -7,20 +7,25 @@ import type { ProductListItem } from "@/types";
 export const dynamic = "force-dynamic";
 
 interface Props {
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<{ category?: string; q?: string }>;
 }
 
 export default async function HomePage({ searchParams }: Props) {
-  const { category } = await searchParams;
+  const { category, q } = await searchParams;
+  const searchQuery = q?.trim().toLowerCase() ?? "";
 
   let products: ProductListItem[] = [];
   let categories: string[] = [];
   let usingMock = false;
+  let hasNextPage = false;
+  let endCursor: string | null = null;
 
   if (isWpConfigured()) {
     try {
       const result = await getProducts({ first: 12, category });
       products = result.nodes;
+      hasNextPage = result.hasNextPage;
+      endCursor = result.endCursor;
       categories = [
         ...new Set(
           products.flatMap((p) => p.productCategories.nodes.map((c) => c.name)),
@@ -37,13 +42,22 @@ export default async function HomePage({ searchParams }: Props) {
     usingMock = true;
   }
 
-  const filtered = category
-    ? products.filter((p) =>
-        p.productCategories.nodes.some(
-          (c) => c.slug === category || c.name.toLowerCase() === category.toLowerCase(),
-        ),
-      )
-    : products;
+  // Apply text search filter on the server-fetched set
+  const filtered = products.filter((p) => {
+    const matchesCategory =
+      !category ||
+      p.productCategories.nodes.some(
+        (c) =>
+          c.slug === category ||
+          c.name.toLowerCase() === category.toLowerCase(),
+      );
+    const matchesSearch =
+      !searchQuery || p.name.toLowerCase().includes(searchQuery);
+    return matchesCategory && matchesSearch;
+  });
+
+  // Disable load-more when a text search is active (filter is in-memory only)
+  const canLoadMore = !searchQuery && hasNextPage;
 
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10">
@@ -66,8 +80,24 @@ export default async function HomePage({ searchParams }: Props) {
         </div>
       )}
 
-      {/* Category filter */}
-      {categories.length > 0 && (
+      {/* Search results heading */}
+      {searchQuery && (
+        <div className="mb-6">
+          <p className="text-sm text-muted-foreground">
+            {filtered.length > 0
+              ? `${filtered.length} result${filtered.length !== 1 ? "s" : ""} for `
+              : "No results for "}
+            <strong className="text-foreground">&ldquo;{q}&rdquo;</strong>
+            {" · "}
+            <a href="/" className="underline underline-offset-2 hover:text-foreground">
+              clear search
+            </a>
+          </p>
+        </div>
+      )}
+
+      {/* Category filter pills — hidden while searching */}
+      {!searchQuery && categories.length > 0 && (
         <div className="mb-8 flex flex-wrap gap-2">
           <a
             href="/"
@@ -99,18 +129,13 @@ export default async function HomePage({ searchParams }: Props) {
         </div>
       )}
 
-      {/* Product grid */}
-      {filtered.length === 0 ? (
-        <p className="py-20 text-center text-muted-foreground">
-          No products found in this category.
-        </p>
-      ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filtered.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      )}
+      {/* Product grid with load-more */}
+      <ProductGrid
+        initialProducts={filtered}
+        initialHasNextPage={canLoadMore}
+        initialEndCursor={endCursor}
+        category={category}
+      />
     </div>
   );
 }
