@@ -1,6 +1,10 @@
 import { wpgql } from "./client";
-import { GET_PRODUCTS, GET_PRODUCT } from "./queries";
+import { GET_PRODUCTS, GET_PRODUCT, GET_PRODUCT_CATEGORIES } from "./queries";
 import type { ProductsResponse, ProductResponse, Product, ProductListItem } from "@/types";
+
+interface CategoriesResponse {
+  productCategories: { nodes: Array<{ name: string; slug: string; count: number }> };
+}
 
 export async function getProducts(opts: {
   first?: number;
@@ -22,4 +26,11 @@ export async function getProducts(opts: {
 export async function getProduct(slug: string): Promise<Product | null> {
   const data = await wpgql<ProductResponse>(GET_PRODUCT, { slug });
   return data.product;
+}
+
+export async function getCategories(): Promise<string[]> {
+  const data = await wpgql<CategoriesResponse>(GET_PRODUCT_CATEGORIES);
+  return data.productCategories.nodes
+    .filter((c) => c.count > 0)
+    .map((c) => c.name);
 }

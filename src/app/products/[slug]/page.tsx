@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ChevronRight, Star, ShieldCheck, RefreshCw, Zap, ThumbsUp, BadgeCheck } from "lucide-react";
 import { isWpConfigured } from "@/lib/graphql/client";
 import { getProduct } from "@/lib/graphql/products";
@@ -12,6 +13,42 @@ import type { Product, MockReview } from "@/types";
 
 interface Props {
   params: Promise<{ slug: string }>;
+}
+
+async function resolveProduct(slug: string): Promise<Product | null> {
+  if (isWpConfigured()) {
+    try {
+      return await getProduct(slug);
+    } catch {
+      return MOCK_PRODUCT_MAP[slug] ?? null;
+    }
+  }
+  return MOCK_PRODUCT_MAP[slug] ?? null;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await resolveProduct(slug);
+
+  if (!product) {
+    return { title: "Product not found — HaqueMart" };
+  }
+
+  const description = product.shortDescription
+    ?.replace(/<[^>]+>/g, "")
+    .slice(0, 160) ?? `Shop ${product.name} at HaqueMart`;
+
+  return {
+    title: `${product.name} — HaqueMart`,
+    description,
+    openGraph: {
+      title: product.name,
+      description,
+      images: product.image
+        ? [{ url: product.image.sourceUrl, alt: product.image.altText }]
+        : [],
+    },
+  };
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -77,19 +114,7 @@ function ReviewCard({ review }: { review: MockReview }) {
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-
-  let product: Product | null = null;
-
-  if (isWpConfigured()) {
-    try {
-      product = await getProduct(slug);
-    } catch {
-      product = MOCK_PRODUCT_MAP[slug] ?? null;
-    }
-  } else {
-    product = MOCK_PRODUCT_MAP[slug] ?? null;
-  }
-
+  const product = await resolveProduct(slug);
   if (!product) notFound();
 
   const isOnSale = product.salePrice !== null && product.salePrice !== product.regularPrice;

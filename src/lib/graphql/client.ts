@@ -4,10 +4,6 @@ export function isWpConfigured(): boolean {
   return Boolean(endpoint);
 }
 
-/**
- * Typed fetch wrapper for WPGraphQL.
- * Uses Next.js fetch with ISR revalidation (60 s by default).
- */
 export async function wpgql<T>(
   query: string,
   variables: Record<string, unknown> = {},

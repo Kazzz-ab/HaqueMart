@@ -9,7 +9,7 @@ import type { CartItem } from "@/types";
 interface Props {
   item: Omit<CartItem, "quantity">;
   disabled?: boolean;
-  size?: "default" | "lg";
+  size?: "default" | "sm" | "lg";
 }
 
 export function AddToCartButton({ item, disabled, size = "default" }: Props) {

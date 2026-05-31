@@ -1,7 +1,7 @@
 import { ProductGrid } from "@/components/ProductGrid";
 import { NewsletterSection } from "@/components/NewsletterSection";
 import { isWpConfigured } from "@/lib/graphql/client";
-import { getProducts } from "@/lib/graphql/products";
+import { getProducts, getCategories } from "@/lib/graphql/products";
 import { MOCK_PRODUCTS, MOCK_CATEGORIES } from "@/lib/mock-data";
 import type { ProductListItem } from "@/types";
 
@@ -12,12 +12,12 @@ interface Props {
 }
 
 const CATEGORY_SHOWCASE = [
-  { name: "Bags",       slug: "bags",        emoji: "👜", desc: "Totes, backpacks & more" },
-  { name: "Kitchen",    slug: "kitchen",     emoji: "☕", desc: "Brew & cook in style" },
-  { name: "Home Office",slug: "home-office", emoji: "🖊️",  desc: "Level up your desk" },
-  { name: "Clothing",   slug: "clothing",    emoji: "🧢", desc: "Cosy everyday wear" },
-  { name: "Home",       slug: "home",        emoji: "🕯️",  desc: "Make your space yours" },
-  { name: "Outdoors",   slug: "outdoors",    emoji: "🏕️",  desc: "Gear up for adventure" },
+  { name: "Bags",        slug: "bags",        emoji: "👜", desc: "Totes, backpacks & more" },
+  { name: "Kitchen",     slug: "kitchen",     emoji: "☕", desc: "Brew & cook in style" },
+  { name: "Home Office", slug: "home-office", emoji: "🖊️",  desc: "Level up your desk" },
+  { name: "Clothing",    slug: "clothing",    emoji: "🧢", desc: "Cosy everyday wear" },
+  { name: "Home",        slug: "home",        emoji: "🕯️",  desc: "Make your space yours" },
+  { name: "Outdoors",    slug: "outdoors",    emoji: "🏕️",  desc: "Gear up for adventure" },
 ];
 
 export default async function HomePage({ searchParams }: Props) {
@@ -32,13 +32,14 @@ export default async function HomePage({ searchParams }: Props) {
 
   if (isWpConfigured()) {
     try {
-      const result = await getProducts({ first: 12, category });
-      products = result.nodes;
-      hasNextPage = result.hasNextPage;
-      endCursor = result.endCursor;
-      categories = [
-        ...new Set(products.flatMap((p) => p.productCategories.nodes.map((c) => c.name))),
-      ];
+      const [productsResult, categoryNames] = await Promise.all([
+        getProducts({ first: 12, category }),
+        getCategories(),
+      ]);
+      products = productsResult.nodes;
+      hasNextPage = productsResult.hasNextPage;
+      endCursor = productsResult.endCursor;
+      categories = categoryNames;
     } catch {
       products = MOCK_PRODUCTS;
       categories = MOCK_CATEGORIES;
@@ -65,7 +66,7 @@ export default async function HomePage({ searchParams }: Props) {
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10 flex flex-col gap-16">
 
-      {/* ── Hero ── */}
+      {/* Hero */}
       <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-background border border-primary/10 px-8 py-14 text-center">
         <div className="pointer-events-none absolute -right-12 -top-12 size-48 rounded-full bg-primary/8 blur-3xl" />
         <div className="pointer-events-none absolute -left-12 bottom-0 size-40 rounded-full bg-violet-400/10 blur-3xl" />
@@ -88,18 +89,17 @@ export default async function HomePage({ searchParams }: Props) {
         </div>
       </section>
 
-      {/* ── Demo banner ── */}
+      {/* Demo banner */}
       {usingMock && (
         <div className="-mt-8 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           <strong>Demo mode</strong> — showing sample products. Connect a WooCommerce store via{" "}
-          <code className="text-xs bg-amber-100 px-1 rounded">NEXT_PUBLIC_WP_GRAPHQL_URL</code> to
+          <code className="rounded bg-amber-100 px-1 text-xs">NEXT_PUBLIC_WP_GRAPHQL_URL</code> to
           display live inventory.
         </div>
       )}
 
-      {/* ── Products section ── */}
+      {/* Products section */}
       <section id="products" className="flex flex-col gap-6">
-        {/* Search results heading */}
         {searchQuery && (
           <p className="text-sm text-muted-foreground">
             {filtered.length > 0
@@ -113,7 +113,6 @@ export default async function HomePage({ searchParams }: Props) {
           </p>
         )}
 
-        {/* Category filter pills */}
         {!searchQuery && categories.length > 0 && (
           <div className="flex flex-wrap gap-2">
             <a
@@ -154,7 +153,7 @@ export default async function HomePage({ searchParams }: Props) {
         />
       </section>
 
-      {/* ── Shop by category ── */}
+      {/* Shop by category */}
       {!searchQuery && !category && (
         <section className="flex flex-col gap-6">
           <div className="text-center">
@@ -179,7 +178,7 @@ export default async function HomePage({ searchParams }: Props) {
         </section>
       )}
 
-      {/* ── Newsletter ── */}
+      {/* Newsletter */}
       <NewsletterSection />
     </div>
   );
