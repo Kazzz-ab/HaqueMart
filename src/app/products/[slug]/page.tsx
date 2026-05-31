@@ -86,7 +86,7 @@ function ReviewCard({ review }: { review: MockReview }) {
             <div className="flex items-center gap-1.5">
               <span className="text-sm font-semibold">{review.author}</span>
               {review.verified && (
-                <span className="flex items-center gap-0.5 text-xs font-medium text-emerald-600">
+                <span className="flex items-center gap-0.5 text-xs font-medium text-emerald-400">
                   <BadgeCheck className="size-3.5" /> Verified
                 </span>
               )}
@@ -222,11 +222,11 @@ export default async function ProductPage({ params }: Props) {
             {isOutOfStock ? (
               <span className="font-medium text-destructive">Out of stock</span>
             ) : isLowStock ? (
-              <span className="font-semibold text-orange-600">
+              <span className="font-semibold text-orange-400">
                 Only {product.stockCount} left — order soon!
               </span>
             ) : (
-              <span className="font-medium text-emerald-700">In stock — ready to ship</span>
+              <span className="font-medium text-emerald-400">In stock — ready to ship</span>
             )}
           </div>
 

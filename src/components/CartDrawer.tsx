@@ -61,7 +61,7 @@ export function CartDrawer() {
                 away from <strong className="text-foreground">free shipping!</strong>
               </p>
             ) : (
-              <p className="mb-2 text-center text-xs font-semibold text-emerald-600">
+              <p className="mb-2 text-center text-xs font-semibold text-emerald-400">
                 🎉 You&apos;ve unlocked free shipping!
               </p>
             )}
@@ -146,7 +146,7 @@ export function CartDrawer() {
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Shipping</span>
-              <span className={remaining > 0 ? "text-muted-foreground" : "font-semibold text-emerald-600"}>
+              <span className={remaining > 0 ? "text-muted-foreground" : "font-semibold text-emerald-400"}>
                 {remaining > 0 ? "Calculated at checkout" : "Free"}
               </span>
             </div>

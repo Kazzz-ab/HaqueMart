@@ -56,7 +56,7 @@ export function ProductCard({ product }: Props) {
   const badgeCfg = product.badge ? BADGE_CONFIG[product.badge] : null;
 
   return (
-    <div className="group relative flex flex-col rounded-xl border border-border bg-card overflow-hidden shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+    <div className="group relative flex flex-col rounded-xl border border-border bg-card overflow-hidden shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10">
 
       {/* ── Image ── */}
       <Link href={`/products/${product.slug}`} className="relative aspect-[4/3] overflow-hidden bg-muted block">
@@ -101,7 +101,7 @@ export function ProductCard({ product }: Props) {
         <button
           aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
           onClick={(e) => { e.preventDefault(); toggle(product.id); }}
-          className="absolute top-2 right-2 flex size-8 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur transition-all duration-200 hover:scale-110 active:scale-95"
+          className="absolute top-2 right-2 flex size-8 items-center justify-center rounded-full border border-border/60 bg-card/90 shadow-md backdrop-blur transition-all duration-200 hover:scale-110 hover:border-primary/40 active:scale-95"
         >
           <Heart
             className={cn(

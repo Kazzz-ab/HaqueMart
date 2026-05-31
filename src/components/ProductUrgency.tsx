@@ -54,7 +54,7 @@ export function ProductUrgency({ viewingSeed, inStock }: Props) {
           <Clock className="size-4 shrink-0 text-orange-500" />
           <span className="text-muted-foreground">
             Order in{" "}
-            <strong className="font-semibold text-orange-600">{countdown}</strong> for next-day dispatch
+            <strong className="font-semibold text-orange-400">{countdown}</strong> for next-day dispatch
           </span>
         </div>
       )}

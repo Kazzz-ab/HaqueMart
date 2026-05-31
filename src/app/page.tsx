@@ -67,22 +67,28 @@ export default async function HomePage({ searchParams }: Props) {
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10 flex flex-col gap-16">
 
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-background border border-primary/10 px-8 py-14 text-center">
-        <div className="pointer-events-none absolute -right-12 -top-12 size-48 rounded-full bg-primary/8 blur-3xl" />
-        <div className="pointer-events-none absolute -left-12 bottom-0 size-40 rounded-full bg-violet-400/10 blur-3xl" />
+      <section className="relative overflow-hidden rounded-2xl border border-border/60 bg-card px-8 py-16 text-center">
+        {/* Dot grid */}
+        <div className="pointer-events-none absolute inset-0 opacity-50 [background-image:radial-gradient(oklch(0.30_0.006_265)_1px,transparent_1px)] [background-size:22px_22px]" />
+        {/* Top spotlight */}
+        <div className="pointer-events-none absolute left-1/2 -top-24 size-80 -translate-x-1/2 rounded-full bg-primary/25 blur-3xl" />
+        {/* Bottom-right accent */}
+        <div className="pointer-events-none absolute -right-16 -bottom-16 size-56 rounded-full bg-primary/10 blur-3xl" />
+
         <div className="relative">
-          <span className="mb-4 inline-block rounded-full border border-primary/20 bg-primary/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-primary">
+          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">
+            <span className="size-1.5 animate-pulse rounded-full bg-primary" />
             New arrivals in store
           </span>
-          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight mb-4">
+          <h1 className="mb-4 bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-5xl">
             Quality goods,<br className="hidden sm:block" /> curated for you
           </h1>
-          <p className="text-muted-foreground max-w-md mx-auto mb-6 text-base sm:text-lg">
+          <p className="mx-auto mb-8 max-w-md text-base text-muted-foreground sm:text-lg">
             Discover hand-picked everyday essentials and thoughtful gifts — made to last.
           </p>
           <a
             href="#products"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:bg-primary/85 hover:shadow-lg active:translate-y-px"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-all hover:bg-primary/85 hover:shadow-primary/40 active:translate-y-px"
           >
             Shop all products →
           </a>
@@ -91,9 +97,9 @@ export default async function HomePage({ searchParams }: Props) {
 
       {/* Demo banner */}
       {usingMock && (
-        <div className="-mt-8 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <div className="-mt-8 rounded-lg border border-primary/20 bg-primary/8 px-4 py-3 text-sm text-primary/90">
           <strong>Demo mode</strong> — showing sample products. Connect a WooCommerce store via{" "}
-          <code className="rounded bg-amber-100 px-1 text-xs">NEXT_PUBLIC_WP_GRAPHQL_URL</code> to
+          <code className="rounded bg-primary/10 px-1 text-xs font-mono">NEXT_PUBLIC_WP_GRAPHQL_URL</code> to
           display live inventory.
         </div>
       )}
