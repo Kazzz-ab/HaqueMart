@@ -8,8 +8,13 @@ import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { QuantitySelector } from "@/components/QuantitySelector";
 
+const FREE_SHIPPING_THRESHOLD = 50;
+
 export function CartDrawer() {
   const { cart, isOpen, closeCart, removeItem, updateQuantity } = useCart();
+
+  const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - cart.total);
+  const shippingProgress = Math.min(100, (cart.total / FREE_SHIPPING_THRESHOLD) * 100);
 
   return (
     <>
@@ -34,7 +39,7 @@ export function CartDrawer() {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-4">
           <h2 className="font-semibold">
-            Cart
+            Your Cart
             {cart.itemCount > 0 && (
               <span className="ml-2 text-sm font-normal text-muted-foreground">
                 ({cart.itemCount} item{cart.itemCount !== 1 ? "s" : ""})
@@ -46,12 +51,36 @@ export function CartDrawer() {
           </Button>
         </div>
 
+        {/* Free shipping progress bar */}
+        {cart.items.length > 0 && (
+          <div className="border-b border-border bg-muted/30 px-4 py-3">
+            {remaining > 0 ? (
+              <p className="mb-2 text-center text-xs text-muted-foreground">
+                You&apos;re{" "}
+                <strong className="text-foreground">{formatPrice(remaining)}</strong>{" "}
+                away from <strong className="text-foreground">free shipping!</strong>
+              </p>
+            ) : (
+              <p className="mb-2 text-center text-xs font-semibold text-emerald-600">
+                🎉 You&apos;ve unlocked free shipping!
+              </p>
+            )}
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full rounded-full bg-primary transition-all duration-700"
+                style={{ width: `${shippingProgress}%` }}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Items */}
         <div className="flex-1 overflow-y-auto px-4 py-4">
           {cart.items.length === 0 ? (
             <div className="flex flex-col items-center gap-3 py-16 text-center text-muted-foreground">
-              <ShoppingBag className="size-10 opacity-30" />
-              <p className="text-sm">Your cart is empty</p>
+              <ShoppingBag className="size-12 opacity-20" />
+              <p className="font-medium">Your cart is empty</p>
+              <p className="text-sm">Add something you love to get started.</p>
               <Button variant="outline" size="sm" onClick={closeCart}>
                 Continue shopping
               </Button>
@@ -83,8 +112,8 @@ export function CartDrawer() {
                     >
                       {item.name}
                     </Link>
-                    <span className="text-sm font-semibold">
-                      {item.priceFormatted}
+                    <span className="text-sm font-semibold text-primary">
+                      {formatPrice(item.price * item.quantity)}
                     </span>
                     <div className="flex items-center justify-between mt-1">
                       <QuantitySelector
@@ -115,12 +144,18 @@ export function CartDrawer() {
               <span className="text-muted-foreground">Subtotal</span>
               <span className="font-semibold">{formatPrice(cart.total)}</span>
             </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Shipping</span>
+              <span className={remaining > 0 ? "text-muted-foreground" : "font-semibold text-emerald-600"}>
+                {remaining > 0 ? "Calculated at checkout" : "Free"}
+              </span>
+            </div>
             <p className="text-xs text-muted-foreground">
-              Shipping and taxes calculated at checkout.
+              Taxes calculated at checkout.
             </p>
             <Link href="/checkout" onClick={closeCart}>
               <Button className="w-full" size="lg">
-                Proceed to checkout
+                Proceed to checkout — {formatPrice(cart.total)}
               </Button>
             </Link>
             <Button variant="outline" className="w-full" onClick={closeCart}>

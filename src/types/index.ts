@@ -23,6 +23,12 @@ export interface ProductListItem {
   stockStatus: "IN_STOCK" | "OUT_OF_STOCK" | "ON_BACKORDER";
   image: WPImage | null;
   productCategories: { nodes: ProductCategory[] };
+  // ── FOMO / social-proof fields (populated from mock data or custom meta) ──
+  rating?: number;
+  reviewCount?: number;
+  soldThisWeek?: number;
+  stockCount?: number;
+  badge?: "best-seller" | "trending" | "new";
 }
 
 /** Full product shape used on the detail page */
@@ -31,6 +37,8 @@ export interface Product extends ProductListItem {
   shortDescription: string;
   stockQuantity: number | null;
   galleryImages: { nodes: WPImage[] };
+  reviews?: MockReview[];
+  viewingSeed?: number;
 }
 
 export interface PageInfo {
@@ -69,4 +77,15 @@ export interface Cart {
   total: number;
   /** Total number of units across all line items */
   itemCount: number;
+}
+
+// ── Reviews ───────────────────────────────────────────────────────────────────
+
+export interface MockReview {
+  id: string;
+  author: string;
+  rating: number;
+  date: string;
+  body: string;
+  verified: boolean;
 }
