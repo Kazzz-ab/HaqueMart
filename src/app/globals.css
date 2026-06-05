@@ -28,25 +28,25 @@
   --color-card: var(--card);
 }
 
-/* ── Dark futuristic theme ─────────────────────────────────────────────────── */
+/* ── Warm amber identity — distinct from portfolio's neutral + Meridian's navy ── */
 :root {
-  --background:            oklch(0.08 0.004 265);   /* near-black, barely-cool */
-  --foreground:            oklch(0.96 0.004 265);   /* clean white             */
-  --card:                  oklch(0.12 0.004 265);   /* elevated dark surface   */
-  --card-foreground:       oklch(0.96 0.004 265);
-  --popover:               oklch(0.13 0.004 265);
-  --popover-foreground:    oklch(0.96 0.004 265);
-  --primary:               oklch(0.72 0.17 47);     /* electric amber          */
-  --primary-foreground:    oklch(0.10 0.003 265);   /* dark text on amber      */
-  --secondary:             oklch(0.17 0.005 265);
-  --secondary-foreground:  oklch(0.82 0.005 265);
-  --muted:                 oklch(0.17 0.005 265);
-  --muted-foreground:      oklch(0.52 0.008 265);
-  --accent:                oklch(0.20 0.008 265);
-  --accent-foreground:     oklch(0.92 0.004 265);
+  --background:            oklch(0.08 0.022 52);    /* near-black with warm amber hue */
+  --foreground:            oklch(0.96 0.010 55);    /* warm off-white                 */
+  --card:                  oklch(0.12 0.018 52);    /* warm elevated surface          */
+  --card-foreground:       oklch(0.96 0.010 55);
+  --popover:               oklch(0.13 0.016 52);
+  --popover-foreground:    oklch(0.96 0.010 55);
+  --primary:               oklch(0.72 0.17 47);     /* electric amber                 */
+  --primary-foreground:    oklch(0.10 0.003 52);
+  --secondary:             oklch(0.17 0.014 52);
+  --secondary-foreground:  oklch(0.82 0.010 55);
+  --muted:                 oklch(0.17 0.014 52);
+  --muted-foreground:      oklch(0.52 0.018 52);
+  --accent:                oklch(0.20 0.016 52);
+  --accent-foreground:     oklch(0.92 0.010 55);
   --destructive:           oklch(0.62 0.22 25);
-  --border:                oklch(0.22 0.006 265);
-  --input:                 oklch(0.17 0.005 265);
+  --border:                oklch(0.23 0.018 52);
+  --input:                 oklch(0.17 0.014 52);
   --ring:                  oklch(0.72 0.17 47);
   --radius:                0.5rem;
 }

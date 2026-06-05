@@ -12,7 +12,8 @@ export function HeroSection() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    // ── Three.js particle field ────────────────────────────────────────────
+    // ── Three.js — warm bokeh sprite orbs ─────────────────────────────────
+    // Unique to HaqueMart: soft floating light rather than sharp point-scatter.
     const canvas  = canvasRef.current;
     const section = canvas?.parentElement;
     if (!canvas || !section) return;
@@ -21,110 +22,82 @@ export function HeroSection() {
     let H = section.offsetHeight;
 
     const scene  = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(0, W, H, 0, 0.1, 10);
-    camera.position.z = 1;
+    const camera = new THREE.PerspectiveCamera(58, W / H, 0.1, 100);
+    camera.position.z = 9;
 
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
     renderer.setSize(W, H);
     renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
 
-    const N      = 80;
-    const AMBER  = new THREE.Color(0xd4883a);   // HaqueMart primary
-    const DIM    = new THREE.Color(0x7a4e1e);
-    const BRIGHT = new THREE.Color(0xf0a040);
+    // ── Soft radial gradient texture for bokeh ──
+    const bc   = document.createElement("canvas");
+    bc.width   = 128; bc.height = 128;
+    const bctx = bc.getContext("2d")!;
+    const grad = bctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+    grad.addColorStop(0,    "rgba(230, 158, 55, 0.95)");
+    grad.addColorStop(0.35, "rgba(200, 115, 28, 0.45)");
+    grad.addColorStop(1,    "rgba(180,  75,  8, 0)");
+    bctx.fillStyle = grad;
+    bctx.fillRect(0, 0, 128, 128);
+    const bokehTex = new THREE.CanvasTexture(bc);
 
-    const pts = Array.from({ length: N }, (_, i) => ({
-      x:  Math.random() * W,
-      y:  Math.random() * H,
-      vx: (Math.random() - .5) * .5,
-      vy: (Math.random() - .5) * .5,
-      col: i % 9 === 0 ? BRIGHT : i % 4 === 0 ? DIM : AMBER,
-    }));
-
-    const posArr = new Float32Array(N * 3);
-    const colArr = new Float32Array(N * 3);
-    pts.forEach((p, i) => {
-      posArr[i * 3] = p.x; posArr[i * 3 + 1] = p.y; posArr[i * 3 + 2] = 0;
-      p.col.toArray(colArr, i * 3);
+    // ── Bokeh orb sprites — varying sizes, very slow drift ──
+    const N = 24;
+    type Orb = { x: number; y: number; z: number; vx: number; vy: number; sprite: THREE.Sprite };
+    const orbs: Orb[] = Array.from({ length: N }, () => {
+      const mat = new THREE.SpriteMaterial({
+        map:         bokehTex,
+        transparent: true,
+        opacity:     0.12 + Math.random() * 0.18,
+        blending:    THREE.AdditiveBlending,
+        depthWrite:  false,
+      });
+      const sprite = new THREE.Sprite(mat);
+      const x = (Math.random() - .5) * 16;
+      const y = (Math.random() - .5) * 9;
+      const z = (Math.random() - .5) * 4;
+      sprite.position.set(x, y, z);
+      sprite.scale.setScalar(1.8 + Math.random() * 3.5);
+      scene.add(sprite);
+      return { x, y, z, vx: (Math.random() - .5) * 0.0035, vy: (Math.random() - .5) * 0.003, sprite };
     });
 
-    const ptGeo = new THREE.BufferGeometry();
-    ptGeo.setAttribute("position", new THREE.BufferAttribute(posArr, 3));
-    ptGeo.setAttribute("color",    new THREE.BufferAttribute(colArr, 3));
-    const ptMat = new THREE.PointsMaterial({
-      size: 2.5, vertexColors: true, transparent: true, opacity: 0.5, sizeAttenuation: false,
-    });
-    scene.add(new THREE.Points(ptGeo, ptMat));
-
-    const MAX_LINES  = 170;
-    const linePosArr = new Float32Array(MAX_LINES * 6);
-    const lineGeo    = new THREE.BufferGeometry();
-    lineGeo.setAttribute("position", new THREE.BufferAttribute(linePosArr, 3));
-    lineGeo.setDrawRange(0, 0);
-    const lineMesh = new THREE.LineSegments(
-      lineGeo,
-      new THREE.LineBasicMaterial({ color: 0xd4883a, transparent: true, opacity: 0.1 })
-    );
-    scene.add(lineMesh);
-
-    let mx = -9999, my = -9999;
+    // ── Gentle mouse parallax (no repulsion — warm, inviting) ──
+    let targetX = 0, targetY = 0, currX = 0, currY = 0;
     const onMove = (e: MouseEvent) => {
-      const r = canvas.getBoundingClientRect();
-      mx = e.clientX - r.left;
-      my = H - (e.clientY - r.top);
+      const r = section.getBoundingClientRect();
+      targetX = ((e.clientX - r.left) / W - .5) * 0.4;
+      targetY = ((e.clientY - r.top)  / H - .5) * 0.25;
     };
-    const onLeave = () => { mx = -9999; my = -9999; };
+    const onLeave = () => { targetX = 0; targetY = 0; };
     section.addEventListener("mousemove", onMove);
     section.addEventListener("mouseleave", onLeave);
 
     let rafId = 0;
     function tick() {
       rafId = requestAnimationFrame(tick);
-      const pa = ptGeo.attributes.position;
 
-      pts.forEach((p, i) => {
-        const dx = p.x - mx, dy = p.y - my;
-        const d  = Math.hypot(dx, dy);
-        if (d < 90 && d > 0) {
-          const f = ((90 - d) / 90) * .4;
-          p.vx += (dx / d) * f;
-          p.vy += (dy / d) * f;
-        }
-        p.vx *= .97; p.vy *= .97;
-        const spd = Math.hypot(p.vx, p.vy);
-        if (spd > 2) { p.vx = p.vx / spd * 2; p.vy = p.vy / spd * 2; }
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0)  { p.x = 0;  p.vx =  Math.abs(p.vx); }
-        if (p.x > W)  { p.x = W;  p.vx = -Math.abs(p.vx); }
-        if (p.y < 0)  { p.y = 0;  p.vy =  Math.abs(p.vy); }
-        if (p.y > H)  { p.y = H;  p.vy = -Math.abs(p.vy); }
-        pa.setXYZ(i, p.x, p.y, 0);
+      currX += (targetX - currX) * 0.04;
+      currY += (targetY - currY) * 0.04;
+
+      orbs.forEach((o) => {
+        o.x += o.vx; o.y += o.vy;
+        // Wrap-around (no hard bounce — gentle loop)
+        if (o.x < -9) o.x = 9;
+        if (o.x > 9)  o.x = -9;
+        if (o.y < -5) o.y = 5;
+        if (o.y > 5)  o.y = -5;
+        o.sprite.position.set(o.x + currX, o.y - currY, o.z);
       });
-      pa.needsUpdate = true;
 
-      const la = lineGeo.attributes.position;
-      let li = 0;
-      outer: for (let i = 0; i < N; i++) {
-        for (let j = i + 1; j < N; j++) {
-          if (Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y) < 130) {
-            la.setXYZ(li * 2,     pts[i].x, pts[i].y, 0);
-            la.setXYZ(li * 2 + 1, pts[j].x, pts[j].y, 0);
-            if (++li >= MAX_LINES) break outer;
-          }
-        }
-      }
-      la.needsUpdate = true;
-      lineGeo.setDrawRange(0, li * 2);
       renderer.render(scene, camera);
     }
     tick();
 
     const onResize = () => {
-      W = section.offsetWidth;
-      H = section.offsetHeight;
+      W = section.offsetWidth; H = section.offsetHeight;
       renderer.setSize(W, H);
-      camera.right = W;
-      camera.top   = H;
+      camera.aspect = W / H;
       camera.updateProjectionMatrix();
     };
     window.addEventListener("resize", onResize);
@@ -148,10 +121,9 @@ export function HeroSection() {
       window.removeEventListener("resize", onResize);
       section.removeEventListener("mousemove", onMove);
       section.removeEventListener("mouseleave", onLeave);
+      orbs.forEach((o) => { (o.sprite.material as THREE.SpriteMaterial).map?.dispose(); o.sprite.material.dispose(); });
+      bokehTex.dispose();
       renderer.dispose();
-      ptGeo.dispose();
-      ptMat.dispose();
-      lineGeo.dispose();
     };
   }, []);
 
