@@ -6,6 +6,8 @@ import { WishlistProvider } from "@/lib/wishlist/context";
 import { Navbar } from "@/components/Navbar";
 import { CartDrawer } from "@/components/CartDrawer";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
+import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
+import { RevealInit } from "@/components/RevealInit";
 import Link from "next/link";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -126,15 +128,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <body className="min-h-screen flex flex-col">
-        <WishlistProvider>
-          <CartProvider>
-            <AnnouncementBar />
-            <Navbar />
-            <CartDrawer />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </CartProvider>
-        </WishlistProvider>
+        <SmoothScrollProvider>
+          <WishlistProvider>
+            <CartProvider>
+              <AnnouncementBar />
+              <Navbar />
+              <CartDrawer />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </CartProvider>
+          </WishlistProvider>
+          <RevealInit />
+        </SmoothScrollProvider>
       </body>
     </html>
   );

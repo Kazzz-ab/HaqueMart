@@ -1,5 +1,6 @@
 import { ProductGrid } from "@/components/ProductGrid";
 import { NewsletterSection } from "@/components/NewsletterSection";
+import { HeroSection } from "@/components/HeroSection";
 import { isWpConfigured } from "@/lib/graphql/client";
 import { getProducts, getCategories } from "@/lib/graphql/products";
 import { MOCK_PRODUCTS, MOCK_CATEGORIES } from "@/lib/mock-data";
@@ -66,34 +67,8 @@ export default async function HomePage({ searchParams }: Props) {
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10 flex flex-col gap-16">
 
-      {/* Hero */}
-      <section className="relative overflow-hidden rounded-2xl border border-border/60 bg-card px-8 py-16 text-center">
-        {/* Dot grid */}
-        <div className="pointer-events-none absolute inset-0 opacity-50 [background-image:radial-gradient(oklch(0.30_0.006_265)_1px,transparent_1px)] [background-size:22px_22px]" />
-        {/* Top spotlight */}
-        <div className="pointer-events-none absolute left-1/2 -top-24 size-80 -translate-x-1/2 rounded-full bg-primary/25 blur-3xl" />
-        {/* Bottom-right accent */}
-        <div className="pointer-events-none absolute -right-16 -bottom-16 size-56 rounded-full bg-primary/10 blur-3xl" />
-
-        <div className="relative">
-          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">
-            <span className="size-1.5 animate-pulse rounded-full bg-primary" />
-            New arrivals in store
-          </span>
-          <h1 className="mb-4 bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-5xl">
-            Quality goods,<br className="hidden sm:block" /> curated for you
-          </h1>
-          <p className="mx-auto mb-8 max-w-md text-base text-muted-foreground sm:text-lg">
-            Discover hand-picked everyday essentials and thoughtful gifts — made to last.
-          </p>
-          <a
-            href="#products"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-all hover:bg-primary/85 hover:shadow-primary/40 active:translate-y-px"
-          >
-            Shop all products →
-          </a>
-        </div>
-      </section>
+      {/* Hero — Three.js canvas + GSAP entrance */}
+      <HeroSection />
 
       {/* Demo banner */}
       {usingMock && (
@@ -162,18 +137,18 @@ export default async function HomePage({ searchParams }: Props) {
       {/* Shop by category */}
       {!searchQuery && !category && (
         <section className="flex flex-col gap-6">
-          <div className="text-center">
+          <div className="text-center" data-reveal>
             <h2 className="text-2xl font-bold">Shop by category</h2>
             <p className="mt-1 text-muted-foreground">Find exactly what you&apos;re looking for</p>
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3" data-reveal-stagger>
             {CATEGORY_SHOWCASE.map(({ name, slug, emoji, desc }) => (
               <a
                 key={slug}
                 href={`/?category=${slug}`}
-                className="group flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-6 text-center shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary/40 hover:shadow-md"
+                className="group flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
               >
-                <span className="text-3xl transition-transform duration-200 group-hover:scale-110">
+                <span className="text-3xl transition-transform duration-300 group-hover:scale-110">
                   {emoji}
                 </span>
                 <span className="font-semibold">{name}</span>
@@ -185,7 +160,9 @@ export default async function HomePage({ searchParams }: Props) {
       )}
 
       {/* Newsletter */}
-      <NewsletterSection />
+      <div data-reveal>
+        <NewsletterSection />
+      </div>
     </div>
   );
 }
