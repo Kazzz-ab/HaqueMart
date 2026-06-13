@@ -1,7 +1,34 @@
-import type { ProductListItem, Product, MockReview } from "@/types";
+import type { ProductListItem, Product, MockReview, WPImage } from "@/types";
 
-const placeholder = (seed: string) =>
-  `https://picsum.photos/seed/${seed}/800/600`;
+// ── Curated photography (verified Unsplash IDs) ───────────────────────────────
+// All amounts below are in the BASE currency (USD); the currency provider
+// converts + formats them to the shopper's selected currency at render time.
+
+const U = "https://images.unsplash.com/photo-";
+const img = (id: string, w = 1000) => `${U}${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+/** Build a small gallery from one photo using crop/treatment variants. */
+function galleryFor(id: string, name: string): { nodes: WPImage[] } {
+  const base = `${U}${id}?auto=format&fit=crop&w=1100&q=80`;
+  return {
+    nodes: [
+      { sourceUrl: base, altText: `${name} — view 1` },
+      { sourceUrl: `${base}&crop=entropy`, altText: `${name} — view 2` },
+      { sourceUrl: `${base}&sat=-45`, altText: `${name} — detail` },
+    ],
+  };
+}
+
+const PHOTO: Record<string, string> = {
+  "mock-1": "1544816155-12df9643f363", // canvas tote
+  "mock-2": "1442512595331-e89e73853f31", // pour-over coffee
+  "mock-3": "1496128858413-b36217c2ce36", // desk organiser
+  "mock-4": "1511500118080-275313ec90a1", // merino beanie
+  "mock-5": "1512880366380-a8446f4321e1", // linen cushion
+  "mock-6": "1523362628745-0c100150b504", // water bottle
+  "mock-7": "1585641689080-2e530457803b", // soy candle
+  "mock-8": "1550517355-375c103a6a81", // leather notebook
+};
 
 // ── Shared review pool ────────────────────────────────────────────────────────
 
@@ -48,80 +75,80 @@ const REVIEWS: Record<string, MockReview[]> = {
   ],
 };
 
-// ── Product listings ──────────────────────────────────────────────────────────
+// ── Product listings (prices are USD base amounts) ────────────────────────────
 
 export const MOCK_PRODUCTS: ProductListItem[] = [
   {
     id: "mock-1", databaseId: 1,
     name: "Minimalist Canvas Tote", slug: "minimalist-canvas-tote",
-    price: "£24.99", regularPrice: "£24.99", salePrice: null,
+    priceAmount: 32, regularPriceAmount: 32, salePriceAmount: null,
     stockStatus: "IN_STOCK",
-    image: { sourceUrl: placeholder("tote-bag"), altText: "Minimalist Canvas Tote" },
+    image: { sourceUrl: img(PHOTO["mock-1"]), altText: "Minimalist Canvas Tote" },
     productCategories: { nodes: [{ name: "Bags", slug: "bags" }] },
-    rating: 4.7, reviewCount: 83, soldThisWeek: 14, stockCount: 4, badge: "best-seller",
+    rating: 4.7, reviewCount: 83, stockCount: 28, badge: "best-seller",
   },
   {
     id: "mock-2", databaseId: 2,
     name: "Matte Ceramic Pour-Over Set", slug: "matte-ceramic-pour-over-set",
-    price: "£34.99", regularPrice: "£44.99", salePrice: "£34.99",
+    priceAmount: 44, regularPriceAmount: 58, salePriceAmount: 44,
     stockStatus: "IN_STOCK",
-    image: { sourceUrl: placeholder("coffee-set"), altText: "Ceramic Pour-Over Set" },
+    image: { sourceUrl: img(PHOTO["mock-2"]), altText: "Matte Ceramic Pour-Over Set" },
     productCategories: { nodes: [{ name: "Kitchen", slug: "kitchen" }] },
-    rating: 4.6, reviewCount: 61, soldThisWeek: 9, stockCount: 7, badge: "trending",
+    rating: 4.6, reviewCount: 61, stockCount: 19,
   },
   {
     id: "mock-3", databaseId: 3,
     name: "Bamboo Desk Organiser", slug: "bamboo-desk-organiser",
-    price: "£19.99", regularPrice: "£19.99", salePrice: null,
+    priceAmount: 26, regularPriceAmount: 26, salePriceAmount: null,
     stockStatus: "IN_STOCK",
-    image: { sourceUrl: placeholder("desk-organiser"), altText: "Bamboo Desk Organiser" },
+    image: { sourceUrl: img(PHOTO["mock-3"]), altText: "Bamboo Desk Organiser" },
     productCategories: { nodes: [{ name: "Home Office", slug: "home-office" }] },
-    rating: 4.4, reviewCount: 47, soldThisWeek: 7, stockCount: 12,
+    rating: 4.4, reviewCount: 47, stockCount: 34,
   },
   {
     id: "mock-4", databaseId: 4,
     name: "Merino Wool Beanie", slug: "merino-wool-beanie",
-    price: "£18.00", regularPrice: "£25.00", salePrice: "£18.00",
+    priceAmount: 24, regularPriceAmount: 34, salePriceAmount: 24,
     stockStatus: "IN_STOCK",
-    image: { sourceUrl: placeholder("beanie-hat"), altText: "Merino Wool Beanie" },
+    image: { sourceUrl: img(PHOTO["mock-4"]), altText: "Merino Wool Beanie" },
     productCategories: { nodes: [{ name: "Clothing", slug: "clothing" }] },
-    rating: 4.8, reviewCount: 124, soldThisWeek: 22, stockCount: 3, badge: "best-seller",
+    rating: 4.8, reviewCount: 124, stockCount: 4, badge: "best-seller",
   },
   {
     id: "mock-5", databaseId: 5,
-    name: "Linen Cushion Cover – Sage", slug: "linen-cushion-cover-sage",
-    price: "£14.99", regularPrice: "£14.99", salePrice: null,
+    name: "Linen Cushion Cover — Sage", slug: "linen-cushion-cover-sage",
+    priceAmount: 19, regularPriceAmount: 19, salePriceAmount: null,
     stockStatus: "IN_STOCK",
-    image: { sourceUrl: placeholder("cushion-cover"), altText: "Linen Cushion Cover" },
+    image: { sourceUrl: img(PHOTO["mock-5"]), altText: "Linen Cushion Cover in sage" },
     productCategories: { nodes: [{ name: "Home", slug: "home" }] },
-    rating: 4.3, reviewCount: 39, soldThisWeek: 5, stockCount: 9, badge: "new",
+    rating: 4.3, reviewCount: 39, stockCount: 22, badge: "new",
   },
   {
     id: "mock-6", databaseId: 6,
     name: "Stainless Water Bottle 750ml", slug: "stainless-water-bottle-750ml",
-    price: "£22.00", regularPrice: "£22.00", salePrice: null,
+    priceAmount: 29, regularPriceAmount: 29, salePriceAmount: null,
     stockStatus: "IN_STOCK",
-    image: { sourceUrl: placeholder("water-bottle"), altText: "Stainless Water Bottle" },
+    image: { sourceUrl: img(PHOTO["mock-6"]), altText: "Stainless Water Bottle" },
     productCategories: { nodes: [{ name: "Outdoors", slug: "outdoors" }] },
-    rating: 4.5, reviewCount: 92, soldThisWeek: 18, stockCount: 6, badge: "trending",
+    rating: 4.5, reviewCount: 92, stockCount: 16, badge: "best-seller",
   },
   {
     id: "mock-7", databaseId: 7,
-    name: "Scented Soy Candle – Cedarwood", slug: "scented-soy-candle-cedarwood",
-    price: "£12.99", regularPrice: "£16.99", salePrice: "£12.99",
+    name: "Scented Soy Candle — Cedarwood", slug: "scented-soy-candle-cedarwood",
+    priceAmount: 17, regularPriceAmount: 22, salePriceAmount: 17,
     stockStatus: "IN_STOCK",
-    image: { sourceUrl: placeholder("soy-candle"), altText: "Scented Soy Candle" },
+    image: { sourceUrl: img(PHOTO["mock-7"]), altText: "Scented Soy Candle in cedarwood" },
     productCategories: { nodes: [{ name: "Home", slug: "home" }] },
-    rating: 4.6, reviewCount: 58, soldThisWeek: 11, stockCount: 8,
+    rating: 4.6, reviewCount: 58, stockCount: 31,
   },
   {
     id: "mock-8", databaseId: 8,
     name: "Leather A5 Notebook", slug: "leather-a5-notebook",
-    price: "£17.50", regularPrice: "£17.50", salePrice: null,
+    priceAmount: 23, regularPriceAmount: 23, salePriceAmount: null,
     stockStatus: "OUT_OF_STOCK",
-    image: { sourceUrl: placeholder("leather-notebook"), altText: "Leather A5 Notebook" },
-    productCategories: { nodes: [{ name: "Stationery", slug: "stationery" }] },
-    rating: 4.2, reviewCount: 29, soldThisWeek: 3, stockCount: 0,
+    image: { sourceUrl: img(PHOTO["mock-8"]), altText: "Leather A5 Notebook" },
+    productCategories: { nodes: [{ name: "Home Office", slug: "home-office" }] },
+    rating: 4.2, reviewCount: 29, stockCount: 0,
   },
 ];
 
@@ -130,16 +157,35 @@ export const MOCK_PRODUCT_MAP: Record<string, Product> = Object.fromEntries(
     p.slug,
     {
       ...p,
-      description: `<p>A beautifully crafted ${p.name.toLowerCase()}. Made with quality materials and designed to last.</p>`,
-      shortDescription: `Quality ${p.name.toLowerCase()} — perfect for everyday use.`,
+      description: `<p>A beautifully made ${p.name.toLowerCase()}, considered down to the last detail. Crafted from quality materials and built to last — the kind of everyday object that quietly earns its place.</p><p>Sourced responsibly and shipped worldwide, with transparent pricing in your local currency.</p>`,
+      shortDescription: `A considered ${p.name.toLowerCase()} — quality materials, made to last.`,
       stockQuantity: p.stockStatus === "IN_STOCK" ? (p.stockCount ?? 10) : 0,
-      galleryImages: { nodes: [] },
+      galleryImages: galleryFor(PHOTO[p.id], p.name),
       reviews: REVIEWS[p.id] ?? [],
-      viewingSeed: [12, 8, 6, 15, 5, 11, 7, 4][parseInt(p.id.replace("mock-", "")) - 1] ?? 6,
     },
-  ])
+  ]),
 );
 
 export const MOCK_CATEGORIES = [
-  "Bags", "Kitchen", "Home Office", "Clothing", "Home", "Outdoors", "Stationery",
+  "Bags", "Kitchen", "Home Office", "Clothing", "Home", "Outdoors",
+];
+
+// ── Editorial imagery for the storefront ──────────────────────────────────────
+
+export const HERO_IMAGE = img("1467043153537-a4fba2cd39ef", 1600);
+export const STORY_IMAGE = img("1500067803284-4304564c8655", 1200);
+
+export interface CollectionTile {
+  name: string;
+  slug: string;
+  image: string;
+}
+
+export const COLLECTION_SHOWCASE: CollectionTile[] = [
+  { name: "Bags",        slug: "bags",        image: img("1506094543314-3747d5123bbe") },
+  { name: "Kitchen",     slug: "kitchen",     image: img("1452251889946-8ff5ea7b27ab") },
+  { name: "Home Office", slug: "home-office", image: img("1452601395039-3184bc03cb09") },
+  { name: "Clothing",    slug: "clothing",    image: img("1517677208171-0bc6725a3e60") },
+  { name: "Home",        slug: "home",        image: img("1602516793068-35b73edf3368") },
+  { name: "Outdoors",    slug: "outdoors",    image: img("1414016642750-7fdd78dc33d9") },
 ];

@@ -18,6 +18,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const stored = localStorage.getItem(KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time hydration from localStorage
       if (stored) setIds(new Set(JSON.parse(stored) as string[]));
     } catch {}
   }, []);

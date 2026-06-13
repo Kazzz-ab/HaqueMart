@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, ArrowRight, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowRight, Check } from "lucide-react";
+import { useLocale } from "@/lib/i18n/locale";
 
 export function NewsletterSection() {
+  const { t } = useLocale();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
@@ -15,48 +16,42 @@ export function NewsletterSection() {
   }
 
   return (
-    <section className="rounded-2xl bg-primary px-8 py-12 text-center text-primary-foreground">
-      <div className="mx-auto max-w-md">
-        <div className="mb-4 flex justify-center">
-          <span className="flex size-12 items-center justify-center rounded-full bg-primary-foreground/15">
-            <Mail className="size-5" />
-          </span>
-        </div>
-
-        <h2 className="mb-2 text-2xl font-bold">Get 10% off your first order</h2>
-        <p className="mb-6 text-primary-foreground/80">
-          Join 12,000+ subscribers. New arrivals, exclusive deals, and styling tips — straight to your inbox.
-        </p>
+    <section
+      data-reveal
+      className="overflow-hidden rounded-3xl bg-foreground px-6 py-14 text-background sm:px-12 sm:py-16"
+    >
+      <div className="mx-auto max-w-xl text-center">
+        <h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
+          {t("newsletter.title")}
+        </h2>
+        <p className="mx-auto mt-3 max-w-md text-background/70">{t("newsletter.subtitle")}</p>
 
         {submitted ? (
-          <div className="animate-in fade-in flex items-center justify-center gap-2 rounded-xl bg-primary-foreground/10 py-4 font-medium">
+          <div className="mx-auto mt-8 flex max-w-sm items-center justify-center gap-2 rounded-full bg-background/10 py-3.5 font-medium">
             <Check className="size-5" />
-            You&apos;re in! Check your inbox for your discount code.
+            {t("newsletter.success")}
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex gap-2">
+          <form onSubmit={handleSubmit} className="mx-auto mt-8 flex max-w-md gap-2">
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email…"
-              className="min-w-0 flex-1 rounded-lg border-0 bg-primary-foreground/10 px-4 py-2.5 text-sm text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary-foreground/30"
+              placeholder={t("newsletter.placeholder")}
+              className="min-w-0 flex-1 rounded-full border border-background/20 bg-background/10 px-5 py-3 text-sm text-background placeholder:text-background/50 focus:border-background/40 focus:outline-none focus:ring-2 focus:ring-background/20"
             />
-            <Button
+            <button
               type="submit"
-              variant="secondary"
-              className="shrink-0 gap-1.5 bg-primary-foreground text-primary hover:bg-primary-foreground/90"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-background px-6 py-3 text-sm font-medium text-foreground transition-opacity hover:opacity-90"
             >
-              Subscribe
+              {t("newsletter.button")}
               <ArrowRight className="size-4" />
-            </Button>
+            </button>
           </form>
         )}
 
-        <p className="mt-4 text-xs text-primary-foreground/50">
-          No spam, ever. Unsubscribe any time.
-        </p>
+        <p className="mt-4 text-xs text-background/50">{t("newsletter.disclaimer")}</p>
       </div>
     </section>
   );

@@ -1,0 +1,105 @@
+import type { Dictionary, DeepPartial } from "./index";
+
+// Arabic — partial, right-to-left. Unset keys fall back to English.
+const ar: DeepPartial<Dictionary> = {
+  nav: {
+    shopAll: "تسوّق الكل",
+    collections: "المجموعات",
+    story: "قصتنا",
+    searchPlaceholder: "ابحث عن المنتجات…",
+    account: "الحساب",
+    wishlist: "المفضلة",
+    cart: "السلة",
+  },
+  announce: {
+    shippingPrefix: "شحن مجاني إلى جميع أنحاء العالم للطلبات التي تتجاوز ",
+  },
+  hero: {
+    eyebrow: "السوق العالمي للمنتجات المختارة بعناية",
+    titleLine1: "منتجات عالية الجودة،",
+    titleLine2: "تُشحن إلى جميع أنحاء العالم",
+    subtitle:
+      "تشكيلة منتقاة من الأساسيات والهدايا المدروسة — مصادر مسؤولة، بعملتك، وتُوصَّل إلى بابك.",
+    ctaPrimary: "تسوّق المجموعة",
+    ctaSecondary: "اقرأ قصتنا",
+  },
+  trust: {
+    shippingTitle: "شحن عالمي",
+    shippingSub: "إلى أكثر من 30 دولة",
+    paymentTitle: "مدفوعات آمنة",
+    paymentSub: "دفع مشفّر",
+    returnsTitle: "إرجاع سهل",
+    returnsSub: "ضمان 30 يومًا",
+    currencyTitle: "بعملتك",
+    currencySub: "أسعار محلية",
+  },
+  collections: {
+    eyebrow: "تصفّح",
+    title: "تسوّق حسب المجموعة",
+    subtitle: "قطع مختارة بعناية، منظّمة بما يناسب أسلوب حياتك.",
+    cta: "عرض الكل",
+  },
+  products: {
+    eyebrow: "مميّزة",
+    title: "جديد هذا الموسم",
+    all: "الكل",
+    loadMore: "عرض المزيد",
+    loading: "جارٍ التحميل…",
+    empty: "لم يتم العثور على منتجات.",
+  },
+  newsletter: {
+    title: "انضم إلى القائمة",
+    subtitle: "وصولات جديدة مختارة وقصص موسمية — رسائل قليلة مدروسة شهريًا.",
+    placeholder: "أدخل بريدك الإلكتروني",
+    button: "اشترك",
+    success: "تم! ترقّب رسالتنا القادمة.",
+    disclaimer: "بدون رسائل مزعجة. يمكنك إلغاء الاشتراك في أي وقت.",
+  },
+  footer: {
+    tagline: "متجر عالمي منتقى للمنتجات المختارة بعناية — يُشحن إلى كل مكان.",
+    shop: "المتجر",
+    help: "المساعدة",
+    company: "الشركة",
+    rights: "جميع الحقوق محفوظة.",
+    region: "المنطقة والعملة",
+  },
+  cart: {
+    title: "سلتك",
+    empty: "سلتك فارغة",
+    emptySub: "أضف ما يعجبك لتبدأ.",
+    continue: "متابعة التسوق",
+    subtotal: "المجموع الفرعي",
+    shipping: "الشحن",
+    shippingCalc: "يُحتسب عند الدفع",
+    shippingFree: "مجاني",
+    checkout: "المتابعة إلى الدفع",
+    unlocked: "لقد حصلت على شحن مجاني!",
+  },
+  pdp: {
+    addToCart: "أضف إلى السلة",
+    added: "أُضيف إلى السلة",
+    inStock: "متوفر — جاهز للشحن",
+    lowStock: "كمية محدودة — اطلب قريبًا",
+    outOfStock: "غير متوفر",
+    details: "تفاصيل المنتج",
+    reviews: "آراء العملاء",
+    verified: "موثّق",
+  },
+  checkout: {
+    title: "الدفع",
+    contact: "بيانات التواصل",
+    email: "البريد الإلكتروني",
+    shippingAddress: "عنوان الشحن",
+    country: "الدولة",
+    summary: "ملخص الطلب",
+    total: "الإجمالي",
+    placeOrder: "إتمام الطلب",
+    placing: "جارٍ تنفيذ الطلب…",
+  },
+  success: {
+    title: "تم تأكيد الطلب",
+    continue: "متابعة التسوق",
+  },
+};
+
+export default ar;

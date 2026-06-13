@@ -9,7 +9,8 @@ const nextConfig: NextConfig = {
       ...(wpHostname
         ? [{ protocol: "https" as const, hostname: wpHostname }]
         : []),
-      // Picsum placeholder images used in demo/mock mode
+      // Curated demo/mock product & editorial photography
+      { protocol: "https" as const, hostname: "images.unsplash.com" },
       { protocol: "https" as const, hostname: "picsum.photos" },
       { protocol: "https" as const, hostname: "fastly.picsum.photos" },
     ],

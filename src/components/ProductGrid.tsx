@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { fetchMoreProducts } from "@/lib/actions";
+import { useLocale } from "@/lib/i18n/locale";
 import type { ProductListItem } from "@/types";
 
 interface Props {
@@ -20,6 +21,7 @@ export function ProductGrid({
   initialEndCursor,
   category,
 }: Props) {
+  const { t } = useLocale();
   const [products, setProducts] = useState(initialProducts);
   const [hasNextPage, setHasNextPage] = useState(initialHasNextPage);
   const [cursor, setCursor] = useState(initialEndCursor);
@@ -38,7 +40,7 @@ export function ProductGrid({
   if (products.length === 0) {
     return (
       <p className="py-20 text-center text-muted-foreground">
-        No products found.
+        {t("products.empty")}
       </p>
     );
   }
@@ -61,7 +63,7 @@ export function ProductGrid({
             className="min-w-36 gap-2"
           >
             {isPending && <Loader2 className="size-4 animate-spin" />}
-            {isPending ? "Loading…" : "Load more"}
+            {isPending ? t("products.loading") : t("products.loadMore")}
           </Button>
         </div>
       )}

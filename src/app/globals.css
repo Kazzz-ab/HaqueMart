@@ -9,7 +9,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-fraunces);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -28,68 +28,57 @@
   --color-card: var(--card);
 }
 
-/* ── Warm amber identity — distinct from portfolio's neutral + Meridian's navy ── */
+/* ── Light editorial luxury — warm ivory/stone neutrals + deep teal jewel accent ── */
 :root {
-  --background:            oklch(0.08 0.022 52);    /* near-black with warm amber hue */
-  --foreground:            oklch(0.96 0.010 55);    /* warm off-white                 */
-  --card:                  oklch(0.12 0.018 52);    /* warm elevated surface          */
-  --card-foreground:       oklch(0.96 0.010 55);
-  --popover:               oklch(0.13 0.016 52);
-  --popover-foreground:    oklch(0.96 0.010 55);
-  --primary:               oklch(0.72 0.17 47);     /* electric amber                 */
-  --primary-foreground:    oklch(0.10 0.003 52);
-  --secondary:             oklch(0.17 0.014 52);
-  --secondary-foreground:  oklch(0.82 0.010 55);
-  --muted:                 oklch(0.17 0.014 52);
-  --muted-foreground:      oklch(0.52 0.018 52);
-  --accent:                oklch(0.20 0.016 52);
-  --accent-foreground:     oklch(0.92 0.010 55);
-  --destructive:           oklch(0.62 0.22 25);
-  --border:                oklch(0.23 0.018 52);
-  --input:                 oklch(0.17 0.014 52);
-  --ring:                  oklch(0.72 0.17 47);
-  --radius:                0.5rem;
+  --background:            oklch(0.985 0.006 85);    /* warm ivory                      */
+  --foreground:            oklch(0.22 0.010 75);     /* deep warm ink                   */
+  --card:                  oklch(0.998 0.003 85);    /* near-white surface              */
+  --card-foreground:       oklch(0.22 0.010 75);
+  --popover:               oklch(0.998 0.003 85);
+  --popover-foreground:    oklch(0.22 0.010 75);
+  --primary:               oklch(0.50 0.086 184);    /* deep teal/emerald jewel         */
+  --primary-foreground:    oklch(0.99 0.005 184);
+  --secondary:             oklch(0.955 0.006 85);    /* warm stone                      */
+  --secondary-foreground:  oklch(0.30 0.010 75);
+  --muted:                 oklch(0.955 0.006 85);
+  --muted-foreground:      oklch(0.505 0.012 75);    /* warm grey                       */
+  --accent:               oklch(0.945 0.018 184);    /* faint teal tint for hovers      */
+  --accent-foreground:     oklch(0.33 0.040 184);
+  --destructive:           oklch(0.55 0.200 25);
+  --border:                oklch(0.905 0.006 85);     /* soft warm stone hairline        */
+  --input:                 oklch(0.905 0.006 85);
+  --ring:                  oklch(0.50 0.086 184);
+  --radius:                0.625rem;
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/40;
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "ss01", "cv01";
   }
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
   }
 
-  /* Futuristic scrollbar */
-  ::-webkit-scrollbar       { width: 6px; }
+  /* Editorial display type for marketing headings */
+  .font-heading {
+    font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
+    font-optical-sizing: auto;
+    letter-spacing: -0.01em;
+  }
+
+  /* Refined slim scrollbar */
+  ::-webkit-scrollbar       { width: 9px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: oklch(0.28 0.006 265); border-radius: 9999px; }
-  ::-webkit-scrollbar-thumb:hover { background: oklch(0.72 0.17 47); }
+  ::-webkit-scrollbar-thumb { background: oklch(0.86 0.006 85); border-radius: 9999px; border: 2px solid var(--background); }
+  ::-webkit-scrollbar-thumb:hover { background: oklch(0.50 0.086 184); }
 
   /* Selection highlight */
-  ::selection { background: oklch(0.72 0.17 47 / 0.35); color: oklch(0.96 0.004 265); }
-}
-
-/* ── Product card enhanced glow ─────────────────────────────────────────────── */
-.group:is([class*="rounded-xl"]):hover {
-  box-shadow:
-    0 0 0 1px oklch(0.72 0.17 47 / 0.08),
-    0 12px 45px oklch(0 0 0 / 0.5),
-    0 0 60px oklch(0.72 0.17 47 / 0.07);
-}
-
-/* ── Navbar frosted glass ───────────────────────────────────────────────────── */
-header.sticky {
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-
-/* ── Button glow on primary ─────────────────────────────────────────────────── */
-a[class*="bg-primary"]:hover,
-button[class*="bg-primary"]:hover {
-  box-shadow: 0 4px 24px oklch(0.72 0.17 47 / 0.45);
+  ::selection { background: oklch(0.50 0.086 184 / 0.18); color: oklch(0.22 0.010 75); }
 }
 
 /* ── Reduced motion ─────────────────────────────────────────────────────────── */
@@ -97,5 +86,6 @@ button[class*="bg-primary"]:hover {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

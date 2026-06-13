@@ -1,0 +1,105 @@
+import type { Dictionary, DeepPartial } from "./index";
+
+// Spanish — partial. Unset keys fall back to English automatically.
+const es: DeepPartial<Dictionary> = {
+  nav: {
+    shopAll: "Comprar todo",
+    collections: "Colecciones",
+    story: "Nuestra historia",
+    searchPlaceholder: "Buscar productos…",
+    account: "Cuenta",
+    wishlist: "Favoritos",
+    cart: "Cesta",
+  },
+  announce: {
+    shippingPrefix: "Envío internacional gratuito en pedidos superiores a ",
+  },
+  hero: {
+    eyebrow: "El mercado global de productos cuidados",
+    titleLine1: "Productos de calidad,",
+    titleLine2: "enviados a todo el mundo",
+    subtitle:
+      "Un catálogo curado de esenciales y regalos pensados — de origen responsable, en tu moneda, enviado a tu puerta.",
+    ctaPrimary: "Ver la colección",
+    ctaSecondary: "Leer nuestra historia",
+  },
+  trust: {
+    shippingTitle: "Envío mundial",
+    shippingSub: "A más de 30 países",
+    paymentTitle: "Pagos seguros",
+    paymentSub: "Pago cifrado",
+    returnsTitle: "Devoluciones fáciles",
+    returnsSub: "Garantía de 30 días",
+    currencyTitle: "Tu moneda",
+    currencySub: "Precios locales",
+  },
+  collections: {
+    eyebrow: "Explorar",
+    title: "Comprar por colección",
+    subtitle: "Piezas cuidadas, organizadas a tu manera.",
+    cta: "Ver todo",
+  },
+  products: {
+    eyebrow: "Destacados",
+    title: "Novedades de la temporada",
+    all: "Todo",
+    loadMore: "Cargar más",
+    loading: "Cargando…",
+    empty: "No se encontraron productos.",
+  },
+  newsletter: {
+    title: "Únete a la lista",
+    subtitle: "Novedades cuidadas e historias de temporada — unos pocos correos al mes.",
+    placeholder: "Introduce tu correo",
+    button: "Suscribirse",
+    success: "¡Listo! Atento a nuestro próximo envío.",
+    disclaimer: "Sin spam. Cancela cuando quieras.",
+  },
+  footer: {
+    tagline: "Una tienda global curada de productos cuidados — enviados a todo el mundo.",
+    shop: "Tienda",
+    help: "Ayuda",
+    company: "Empresa",
+    rights: "Todos los derechos reservados.",
+    region: "Región y moneda",
+  },
+  cart: {
+    title: "Tu cesta",
+    empty: "Tu cesta está vacía",
+    emptySub: "Añade algo que te guste para empezar.",
+    continue: "Seguir comprando",
+    subtotal: "Subtotal",
+    shipping: "Envío",
+    shippingCalc: "Calculado en el pago",
+    shippingFree: "Gratis",
+    checkout: "Ir al pago",
+    unlocked: "¡Has conseguido envío gratis!",
+  },
+  pdp: {
+    addToCart: "Añadir a la cesta",
+    added: "Añadido a la cesta",
+    inStock: "En stock — listo para enviar",
+    lowStock: "Pocas unidades — pide pronto",
+    outOfStock: "Agotado",
+    details: "Detalles del producto",
+    reviews: "Opiniones de clientes",
+    verified: "Verificado",
+  },
+  checkout: {
+    title: "Pago",
+    contact: "Contacto",
+    email: "Correo electrónico",
+    shippingAddress: "Dirección de envío",
+    country: "País",
+    summary: "Resumen del pedido",
+    total: "Total",
+    placeOrder: "Realizar pedido",
+    placing: "Realizando pedido…",
+  },
+  success: {
+    title: "Pedido confirmado",
+    continue: "Seguir comprando",
+  },
+};
+
+export default es;

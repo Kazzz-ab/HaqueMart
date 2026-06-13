@@ -16,19 +16,22 @@ export interface ProductListItem {
   databaseId: number;
   name: string;
   slug: string;
-  /** Formatted price string from WooCommerce, e.g. "£29.99" */
-  price: string | null;
-  regularPrice: string | null;
-  salePrice: string | null;
+  /** Numeric amounts in the base currency (USD) — source of truth for display */
+  priceAmount: number | null;
+  regularPriceAmount: number | null;
+  salePriceAmount: number | null;
+  /** Raw WooCommerce formatted strings (live data only) */
+  price?: string | null;
+  regularPrice?: string | null;
+  salePrice?: string | null;
   stockStatus: "IN_STOCK" | "OUT_OF_STOCK" | "ON_BACKORDER";
   image: WPImage | null;
   productCategories: { nodes: ProductCategory[] };
-  // ── FOMO / social-proof fields (populated from mock data or custom meta) ──
+  // ── Social-proof fields (populated from mock data or custom meta) ──
   rating?: number;
   reviewCount?: number;
-  soldThisWeek?: number;
   stockCount?: number;
-  badge?: "best-seller" | "trending" | "new";
+  badge?: "best-seller" | "new";
 }
 
 /** Full product shape used on the detail page */
@@ -38,7 +41,6 @@ export interface Product extends ProductListItem {
   stockQuantity: number | null;
   galleryImages: { nodes: WPImage[] };
   reviews?: MockReview[];
-  viewingSeed?: number;
 }
 
 export interface PageInfo {
@@ -63,10 +65,8 @@ export interface CartItem {
   productId: number;
   name: string;
   slug: string;
-  /** Numeric price for calculations, e.g. 29.99 */
+  /** Unit price in the base currency (USD); formatted at render via <Price> */
   price: number;
-  /** Display string, e.g. "£29.99" */
-  priceFormatted: string;
   quantity: number;
   image: WPImage | null;
 }

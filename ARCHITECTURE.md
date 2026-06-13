@@ -1,6 +1,6 @@
 # HaqueMart — Architecture
 
-> A headless WooCommerce storefront: WordPress handles the product catalogue, orders, and inventory via WooCommerce; a Next.js frontend consumes it over WPGraphQL. Falls back gracefully to curated mock data when the WordPress backend is not configured.
+> A premium, **global-facing** headless WooCommerce storefront: WordPress handles the product catalogue, orders, and inventory via WooCommerce; a Next.js frontend consumes it over WPGraphQL and presents it in the shopper's currency and language (RTL-ready). Falls back gracefully to a curated mock catalogue when the WordPress backend is not configured.
 
 ## "Done" spec (v1 scope)
 
@@ -11,10 +11,12 @@ A shopper can browse a product catalogue (with category filters and search), vie
 ```
 Browser
   │
-  └─► Next.js 15 App Router (Vercel)
+  └─► Next.js 16 App Router (Vercel)
+            │   client providers: Locale (i18n) + Currency wrap Cart + Wishlist
             │
             ├─► WPGraphQL endpoint  ──►  WordPress + WooCommerce
             │   (getProducts, getProduct, getCategories)        (product data, inventory)
+            │   prices normalized to numeric base (USD) amounts
             │
             └─► Mock data fallback
                 (MOCK_PRODUCTS / MOCK_CATEGORIES when WP not configured)
@@ -30,17 +32,26 @@ Browser
 ### Pages (`src/app/`)
 | Route | Notes |
 |-------|-------|
-| `/` | Product grid with category filter bar, text search, load-more pagination |
-| `/products/[slug]` | Product detail: images, price, stock status, quantity selector, add-to-cart, reviews |
-| `/checkout` | Address form + order summary; simulated submit (Stripe in Week 3) |
+| `/` | Editorial homepage: image-led hero, feature strip, collections, product grid (category filter + search + load-more), brand story, testimonials, newsletter |
+| `/products/[slug]` | Product detail: gallery, price, stock status, quantity selector, add-to-cart, reassurance block, verified reviews |
+| `/checkout` | Internationalized address form (global country list) + order summary; simulated submit |
 | `/checkout/success` | Order confirmation with generated order ID |
 
+### Internationalization (`src/lib/i18n/`)
+- `currency.tsx` — `CurrencyProvider` / `useCurrency()`: active currency, static demo FX table (base = USD), `convert()` + `format()`, persisted to `localStorage`.
+- `locale.tsx` — `LocaleProvider` / `useLocale()` / `t()`: active language with English-fallback dictionary lookup; sets `<html lang/dir>` (RTL for Arabic), persisted.
+- `regions.ts` — languages, currencies, regions (region preselects language + currency), and the checkout country list.
+- `dictionaries/` — `en` (complete source of truth) + partial `es` / `fr` / `ar`.
+- `components/Price.tsx` — single source of truth for rendering a base-USD amount in the shopper's currency.
+- `components/LocaleSwitcher.tsx` — region · language · currency popover (navbar + footer).
+
 ### State
-- **Cart** — React context + `localStorage` persistence (`src/lib/cart/context.tsx`). Survives page reload.
+- **Cart** — React context + `localStorage` persistence (`src/lib/cart/context.tsx`); prices stored as numeric base (USD) amounts.
 - **Wishlist** — same pattern (`src/lib/wishlist/context.tsx`).
+- **Currency / Locale** — see Internationalization above.
 
 ### UI
-shadcn/ui components on a dark amber-on-charcoal design system (Tailwind CSS). Fully responsive.
+shadcn/ui components on a **light editorial** design system (Tailwind CSS v4): warm ivory/stone neutrals, a deep teal/emerald jewel accent, Fraunces serif display + Geist body. Calm motion via GSAP + Lenis. No hard-sell FOMO — tasteful trust signals only. Fully responsive.
 
 ## Tech decisions
 
@@ -48,14 +59,14 @@ shadcn/ui components on a dark amber-on-charcoal design system (Tailwind CSS). F
 |----------|--------|-----|
 | CMS/backend | WordPress + WooCommerce | Industry-standard headless commerce backend; WPGraphQL is the de-facto bridge |
 | API layer | WPGraphQL | Typed, filterable product queries without REST pagination hacks |
-| Frontend | Next.js 15 App Router | Server components for data fetching; no API key exposure |
+| Frontend | Next.js 16 App Router | Server components for data fetching; no API key exposure |
 | Hosting | Vercel | Zero-config Next.js deploys |
 | Payments | Stripe (Week 3) | Test-mode integration; mock checkout ships first |
 
 ## Mock fallback
 
-`NEXT_PUBLIC_WP_GRAPHQL_URL` is required to connect to a live WooCommerce store. When absent (or when the endpoint errors), the site renders `MOCK_PRODUCTS` — a curated set of 8 products with reviews, images via Picsum, and realistic prices. The UI shows a "Demo mode" banner so the distinction is clear.
+`NEXT_PUBLIC_WP_GRAPHQL_URL` is required to connect to a live WooCommerce store. When absent (or when the endpoint errors), the site renders `MOCK_PRODUCTS` — a curated set of 8 products with reviews, curated Unsplash photography, and base-USD prices. The UI shows a subtle "Demo mode" banner so the distinction is clear.
 
 ## Explicit non-goals (v1)
 
-No user accounts, no real payment processing (Week 3 stretch), no inventory sync, no CMS content beyond product data.
+No user accounts, no real payment processing, no inventory sync, no CMS content beyond product data. The i18n layer is **scaffolding**: currency conversion uses a static demo FX table and only the storefront chrome is translated (product copy stays in its source language).

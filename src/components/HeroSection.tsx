@@ -1,163 +1,107 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import * as THREE from "three";
-import gsap from "gsap";
+import Image from "next/image";
 import Link from "next/link";
+import gsap from "gsap";
+import { Star, ArrowRight } from "lucide-react";
+import { useLocale } from "@/lib/i18n/locale";
+import { HERO_IMAGE } from "@/lib/mock-data";
 
 export function HeroSection() {
-  const canvasRef  = useRef<HTMLCanvasElement>(null);
+  const { t } = useLocale();
   const contentRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    // ── Three.js — warm bokeh sprite orbs ─────────────────────────────────
-    // Unique to HaqueMart: soft floating light rather than sharp point-scatter.
-    const canvas  = canvasRef.current;
-    const section = canvas?.parentElement;
-    if (!canvas || !section) return;
-
-    let W = section.offsetWidth;
-    let H = section.offsetHeight;
-
-    const scene  = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(58, W / H, 0.1, 100);
-    camera.position.z = 9;
-
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
-    renderer.setSize(W, H);
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
-
-    // ── Soft radial gradient texture for bokeh ──
-    const bc   = document.createElement("canvas");
-    bc.width   = 128; bc.height = 128;
-    const bctx = bc.getContext("2d")!;
-    const grad = bctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-    grad.addColorStop(0,    "rgba(230, 158, 55, 0.95)");
-    grad.addColorStop(0.35, "rgba(200, 115, 28, 0.45)");
-    grad.addColorStop(1,    "rgba(180,  75,  8, 0)");
-    bctx.fillStyle = grad;
-    bctx.fillRect(0, 0, 128, 128);
-    const bokehTex = new THREE.CanvasTexture(bc);
-
-    // ── Bokeh orb sprites — varying sizes, very slow drift ──
-    const N = 24;
-    type Orb = { x: number; y: number; z: number; vx: number; vy: number; sprite: THREE.Sprite };
-    const orbs: Orb[] = Array.from({ length: N }, () => {
-      const mat = new THREE.SpriteMaterial({
-        map:         bokehTex,
-        transparent: true,
-        opacity:     0.12 + Math.random() * 0.18,
-        blending:    THREE.AdditiveBlending,
-        depthWrite:  false,
-      });
-      const sprite = new THREE.Sprite(mat);
-      const x = (Math.random() - .5) * 16;
-      const y = (Math.random() - .5) * 9;
-      const z = (Math.random() - .5) * 4;
-      sprite.position.set(x, y, z);
-      sprite.scale.setScalar(1.8 + Math.random() * 3.5);
-      scene.add(sprite);
-      return { x, y, z, vx: (Math.random() - .5) * 0.0035, vy: (Math.random() - .5) * 0.003, sprite };
-    });
-
-    // ── Gentle mouse parallax (no repulsion — warm, inviting) ──
-    let targetX = 0, targetY = 0, currX = 0, currY = 0;
-    const onMove = (e: MouseEvent) => {
-      const r = section.getBoundingClientRect();
-      targetX = ((e.clientX - r.left) / W - .5) * 0.4;
-      targetY = ((e.clientY - r.top)  / H - .5) * 0.25;
-    };
-    const onLeave = () => { targetX = 0; targetY = 0; };
-    section.addEventListener("mousemove", onMove);
-    section.addEventListener("mouseleave", onLeave);
-
-    let rafId = 0;
-    function tick() {
-      rafId = requestAnimationFrame(tick);
-
-      currX += (targetX - currX) * 0.04;
-      currY += (targetY - currY) * 0.04;
-
-      orbs.forEach((o) => {
-        o.x += o.vx; o.y += o.vy;
-        // Wrap-around (no hard bounce — gentle loop)
-        if (o.x < -9) o.x = 9;
-        if (o.x > 9)  o.x = -9;
-        if (o.y < -5) o.y = 5;
-        if (o.y > 5)  o.y = -5;
-        o.sprite.position.set(o.x + currX, o.y - currY, o.z);
-      });
-
-      renderer.render(scene, camera);
-    }
-    tick();
-
-    const onResize = () => {
-      W = section.offsetWidth; H = section.offsetHeight;
-      renderer.setSize(W, H);
-      camera.aspect = W / H;
-      camera.updateProjectionMatrix();
-    };
-    window.addEventListener("resize", onResize);
-
-    // ── GSAP hero entrance ─────────────────────────────────────────────────
     const el = contentRef.current;
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
     if (el) {
-      const badge = el.querySelector(".hero-badge");
-      const h1    = el.querySelector("h1");
-      const p     = el.querySelector("p");
-      const a     = el.querySelector("a");
-      gsap.timeline({ delay: 0.15 })
-        .from(badge, { opacity: 0, y:  10, duration: 0.6,  ease: "power3.out" })
-        .from(h1,    { opacity: 0, y:  24, duration: 0.95, ease: "power3.out" }, "-=0.3")
-        .from(p,     { opacity: 0, y:  16, duration: 0.75, ease: "power3.out" }, "-=0.45")
-        .from(a,     { opacity: 0, y:  12, duration: 0.6,  ease: "power3.out" }, "-=0.35");
+      const items = el.querySelectorAll("[data-hero]");
+      tl.from(items, { opacity: 0, y: 22, duration: 0.9, stagger: 0.12 });
     }
-
+    if (imageRef.current) {
+      tl.from(imageRef.current, { opacity: 0, scale: 1.04, duration: 1.1 }, 0.1);
+    }
     return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener("resize", onResize);
-      section.removeEventListener("mousemove", onMove);
-      section.removeEventListener("mouseleave", onLeave);
-      orbs.forEach((o) => { (o.sprite.material as THREE.SpriteMaterial).map?.dispose(); o.sprite.material.dispose(); });
-      bokehTex.dispose();
-      renderer.dispose();
+      tl.kill();
     };
   }, []);
 
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-border/60 bg-card px-8 py-16 text-center">
-      {/* Three.js canvas fills the section */}
-      <canvas
-        ref={canvasRef}
-        className="pointer-events-none absolute inset-0 h-full w-full"
-        aria-hidden="true"
-      />
-
-      {/* Radial spotlight layered above canvas */}
-      <div className="pointer-events-none absolute left-1/2 -top-24 size-80 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
-      <div className="pointer-events-none absolute -right-16 -bottom-16 size-56 rounded-full bg-primary/8 blur-3xl" />
-
-      {/* Content */}
-      <div ref={contentRef} className="relative z-10">
-        <span className="hero-badge mb-5 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">
-          <span className="size-1.5 animate-pulse rounded-full bg-primary" />
-          New arrivals in store
-        </span>
-        <h1 className="mb-4 bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-5xl">
-          Quality goods,<br className="hidden sm:block" /> curated for you
-        </h1>
-        <p className="mx-auto mb-8 max-w-md text-base text-muted-foreground sm:text-lg">
-          Discover hand-picked everyday essentials and thoughtful gifts — made to last.
-        </p>
-        <Link
-          href="#products"
-          className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-300 hover:bg-primary/85 hover:shadow-primary/50 hover:-translate-y-0.5 active:translate-y-px"
+    <section className="grid items-center gap-10 pt-6 lg:grid-cols-2 lg:gap-16 lg:pt-10">
+      {/* Copy */}
+      <div ref={contentRef} className="flex flex-col items-start">
+        <span
+          data-hero
+          className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-3.5 py-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground"
         >
-          Shop all products →
-        </Link>
+          {t("hero.eyebrow")}
+        </span>
+
+        <h1
+          data-hero
+          className="font-heading mt-6 text-[2.6rem] font-semibold leading-[1.05] tracking-tight sm:text-6xl"
+        >
+          {t("hero.titleLine1")}
+          <br />
+          <span className="text-primary italic">{t("hero.titleLine2")}</span>
+        </h1>
+
+        <p data-hero className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
+          {t("hero.subtitle")}
+        </p>
+
+        <div data-hero className="mt-8 flex flex-wrap items-center gap-3">
+          <Link
+            href="#products"
+            className="inline-flex h-12 items-center gap-2 rounded-full bg-primary px-8 text-[0.95rem] font-medium text-primary-foreground transition-all duration-200 hover:bg-primary/90 hover:shadow-md"
+          >
+            {t("hero.ctaPrimary")}
+            <ArrowRight className="size-4" />
+          </Link>
+          <Link
+            href="#story"
+            className="inline-flex h-12 items-center rounded-full border border-border px-7 text-[0.95rem] font-medium transition-colors hover:bg-accent"
+          >
+            {t("hero.ctaSecondary")}
+          </Link>
+        </div>
+
+        <div data-hero className="mt-8 flex items-center gap-3 text-sm text-muted-foreground">
+          <div className="flex">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star key={i} className="size-4 fill-primary text-primary" />
+            ))}
+          </div>
+          <span>
+            <strong className="font-semibold text-foreground">4.8</strong> from 2,000+ reviews worldwide
+          </span>
+        </div>
+      </div>
+
+      {/* Image */}
+      <div
+        ref={imageRef}
+        className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] border border-border bg-muted shadow-sm sm:aspect-[5/4] lg:aspect-[4/5]"
+      >
+        <Image
+          src={HERO_IMAGE}
+          alt="A curated, considered living space"
+          fill
+          priority
+          sizes="(min-width: 1024px) 50vw, 100vw"
+          className="object-cover"
+        />
+        {/* Floating trust card */}
+        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-4 rounded-2xl border border-border/60 bg-background/85 px-4 py-3 backdrop-blur-md sm:left-auto sm:right-5 sm:w-auto sm:max-w-[15rem]">
+          <div>
+            <p className="text-sm font-semibold">{t("trust.shippingTitle")}</p>
+            <p className="text-xs text-muted-foreground">{t("trust.shippingSub")}</p>
+          </div>
+        </div>
       </div>
     </section>
   );

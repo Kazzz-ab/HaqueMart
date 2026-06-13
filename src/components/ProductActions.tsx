@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { ShoppingCart, Check } from "lucide-react";
+import { ShoppingBag, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import { useCart } from "@/lib/cart/context";
+import { useLocale } from "@/lib/i18n/locale";
 import type { CartItem } from "@/types";
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 
 export function ProductActions({ item, disabled }: Props) {
   const { addItem, openCart } = useCart();
+  const { t } = useLocale();
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
 
@@ -33,8 +35,8 @@ export function ProductActions({ item, disabled }: Props) {
         onClick={handleAdd}
         className="flex-1 gap-2 transition-all"
       >
-        {added ? <Check className="size-4" /> : <ShoppingCart className="size-4" />}
-        {added ? "Added to cart!" : "Add to Cart"}
+        {added ? <Check className="size-4" /> : <ShoppingBag className="size-4" />}
+        {added ? t("pdp.added") : t("pdp.addToCart")}
       </Button>
     </div>
   );

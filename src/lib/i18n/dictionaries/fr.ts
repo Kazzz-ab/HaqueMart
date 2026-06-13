@@ -1,0 +1,105 @@
+import type { Dictionary, DeepPartial } from "./index";
+
+// French — partial. Unset keys fall back to English automatically.
+const fr: DeepPartial<Dictionary> = {
+  nav: {
+    shopAll: "Tout acheter",
+    collections: "Collections",
+    story: "Notre histoire",
+    searchPlaceholder: "Rechercher des produits…",
+    account: "Compte",
+    wishlist: "Favoris",
+    cart: "Panier",
+  },
+  announce: {
+    shippingPrefix: "Livraison internationale offerte dès ",
+  },
+  hero: {
+    eyebrow: "La place de marché mondiale des objets soignés",
+    titleLine1: "Des produits de qualité,",
+    titleLine2: "livrés dans le monde entier",
+    subtitle:
+      "Un catalogue sélectionné d'essentiels et de cadeaux réfléchis — sourcés de façon responsable, dans votre devise, livrés chez vous.",
+    ctaPrimary: "Voir la collection",
+    ctaSecondary: "Lire notre histoire",
+  },
+  trust: {
+    shippingTitle: "Livraison mondiale",
+    shippingSub: "Vers plus de 30 pays",
+    paymentTitle: "Paiements sécurisés",
+    paymentSub: "Paiement chiffré",
+    returnsTitle: "Retours simples",
+    returnsSub: "Garantie 30 jours",
+    currencyTitle: "Votre devise",
+    currencySub: "Prix locaux",
+  },
+  collections: {
+    eyebrow: "Parcourir",
+    title: "Acheter par collection",
+    subtitle: "Des pièces soignées, organisées selon votre mode de vie.",
+    cta: "Tout voir",
+  },
+  products: {
+    eyebrow: "Sélection",
+    title: "Nouveautés de la saison",
+    all: "Tout",
+    loadMore: "Voir plus",
+    loading: "Chargement…",
+    empty: "Aucun produit trouvé.",
+  },
+  newsletter: {
+    title: "Rejoignez la liste",
+    subtitle: "Nouveautés soignées et récits de saison — quelques e-mails par mois.",
+    placeholder: "Saisissez votre e-mail",
+    button: "S'abonner",
+    success: "C'est fait ! Surveillez notre prochain envoi.",
+    disclaimer: "Jamais de spam. Désinscription à tout moment.",
+  },
+  footer: {
+    tagline: "Une boutique mondiale sélectionnée d'objets soignés — livrés partout.",
+    shop: "Boutique",
+    help: "Aide",
+    company: "Entreprise",
+    rights: "Tous droits réservés.",
+    region: "Région et devise",
+  },
+  cart: {
+    title: "Votre panier",
+    empty: "Votre panier est vide",
+    emptySub: "Ajoutez ce que vous aimez pour commencer.",
+    continue: "Continuer les achats",
+    subtotal: "Sous-total",
+    shipping: "Livraison",
+    shippingCalc: "Calculé au paiement",
+    shippingFree: "Offerte",
+    checkout: "Passer au paiement",
+    unlocked: "Vous bénéficiez de la livraison offerte !",
+  },
+  pdp: {
+    addToCart: "Ajouter au panier",
+    added: "Ajouté au panier",
+    inStock: "En stock — prêt à expédier",
+    lowStock: "Stock limité — commandez vite",
+    outOfStock: "Épuisé",
+    details: "Détails du produit",
+    reviews: "Avis clients",
+    verified: "Vérifié",
+  },
+  checkout: {
+    title: "Paiement",
+    contact: "Contact",
+    email: "Adresse e-mail",
+    shippingAddress: "Adresse de livraison",
+    country: "Pays",
+    summary: "Récapitulatif",
+    total: "Total",
+    placeOrder: "Passer la commande",
+    placing: "Commande en cours…",
+  },
+  success: {
+    title: "Commande confirmée",
+    continue: "Continuer les achats",
+  },
+};
+
+export default fr;
